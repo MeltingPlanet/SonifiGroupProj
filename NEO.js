@@ -24,7 +24,7 @@ const {
 // max-api is only available when running this script from Max.
 const maxApi = require("max-api");
 
-const BASE_URL = "https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.2&sort=dist&date-max=";
+const BASE_URL = "https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.2&sort=date&date-max=";
 
 
 function request(requrl) {
@@ -44,25 +44,42 @@ function request(requrl) {
 	});
 }
 var time = [];
+var dist = [];
+var vel = [];
+var mag = [];
 maxApi.addHandler("date", (name) => {
 	const apiurl = `${BASE_URL}${name}`;
 
 	request(apiurl)
 		.then((data) => {
 			if (data.signature.version === "1.1") {
-				/*
+				
 				for(let i = 0; i < data.count; i++){
 					time[i] = data.data[i][3];
 				}
-				maxApi.post(time);
+				maxApi.outlet("time", time);
+
+				for(let i = 0; i < data.count; i++){
+					vel[i] = data.data[i][7];
+				}
+				maxApi.outlet("vel", vel);
+
+				for(let i = 0; i < data.count; i++){
+					mag[i] = data.data[i][10];
+				}
+				maxApi.outlet("mag", mag);
+
+				for(let i = 0; i < data.count; i++){
+					dist[i] = data.data[i][4];
+				}
+				maxApi.outlet("dist", dist);
+				//maxApi.post(time);
 				return time;
-				*/
-				return data;
 
 			}
 			throw new Error("Error fetching data: " + data.message);
 		})
-		.then(data => maxApi.outlet(data))
+		//.then(dist => maxApi.outlet("dist", dist))
 		//.then(time => maxApi.outlet("time", time))
 		// If something went wrong, post an error to the Max console
 		.catch(e => maxApi.post(e.message, maxApi.POST_LEVELS.WARN));
