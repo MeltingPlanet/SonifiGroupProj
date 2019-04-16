@@ -1,11 +1,5 @@
-const {
-	URL
-} = require("url");
-
 // max-api is only available when running this script from Max.
 const maxApi = require("max-api");
-
-//const moment = require("moment");
 
 var unixTimestamp;
 maxApi.addHandler("date", (name) => {
